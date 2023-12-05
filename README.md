@@ -1,12 +1,12 @@
-# Project - Simulation Phase "Controlling a Swarm of Robots in a Simulator Stage using Reynolds Rules"
+It seems like there was an issue with the formatting of the link to the "Expert Groups Document." Let me correct that for you:
 
 ## Objective:
 
 This project aims to simulate the control of a swarm of robots in a simulated environment using Reynolds Rules.
 
 - **Instructions:**
-  - [Project Instructions PDF](objective/instruction/MRS_project_eng-1[1].pdf)
-  - [Expert Groups Document](objective/instruction/Expert groups[1].docx)
+  - [Project Instructions PDF](instruction/MRS_project_eng-1[1].pdf)
+  - [Expert Groups Document](instruction/Expert%20groups%5B1%5D.docx)
 
 - **Course Material:**
   - [Aggregation and Foraging Course Presentation](objective/course/L2_-_Aggregation_and_foraging[1].pptx)
