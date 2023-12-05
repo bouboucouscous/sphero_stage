@@ -33,18 +33,18 @@ The aim of this project is to create a ROS application in order to control a swa
 
 The instructions are the following:
 
-Implement basic Reynolds rules:
+1. Implement basic Reynolds rules:
    1. separation
    2. alignment
    3. cohesion
 
-Test the implementation in the Stage simulator in the map with a frame.
+   Test the implementation in the Stage simulator in the map with a frame.
 
 2. Implement additional Reynolds rules for:
    1. navigation to a given point
    2. obstacle avoidance
 
-Test the implementation in the Stage simulator in the following maps:
+   Test the implementation in the Stage simulator in the following maps:
    1. a map with a frame (useful to keep boids inside certain space)
    2. a map with different types of obstacles (useful to test obstacle avoidance rules)
    3. a simple maze map (useful to test the combination of obstacle avoidance and navigation rules)
