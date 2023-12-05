@@ -38,6 +38,10 @@ The instructions are the following:
    2. alignment
    3. cohesion
 
+<div align="center">
+<img width=600px src="resources/figures/reynolds_rules.png" alt="explode"></a>
+</div>
+
    Test the implementation in the Stage simulator in the map with a frame.
 
 2. Implement additional Reynolds rules for:
