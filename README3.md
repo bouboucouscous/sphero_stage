@@ -88,3 +88,4 @@ The instructions are the following:
 ## Team
 
 - [Sofía Perales](https://github.com/sofiaprlsd)
+- [](https://github.com/bouboucouscous)
