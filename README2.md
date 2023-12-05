@@ -1,4 +1,4 @@
-How use git 
+# How use git 
 
 **To Retrieve the Project:**
 
@@ -113,5 +113,3 @@ When pushing changes after rebasing, use the following command to force push:
 ```bash
 git push --force
 ```
-
-Please replace `yourBranchName` with the actual name of your branch when following these instructions.

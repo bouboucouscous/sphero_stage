@@ -1,5 +1,3 @@
-It seems like there was an issue with the formatting of the link to the "Expert Groups Document." Let me correct that for you:
-
 ## Objective:
 
 This project aims to simulate the control of a swarm of robots in a simulated environment using Reynolds Rules.
