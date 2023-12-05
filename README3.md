@@ -84,7 +84,7 @@ The instructions are the following:
 
 ## Execution
 
-To prove our program you have to run the next commands:
+To test our program you have to run the next commands:
 
 -----------------------------------------------------------------------
 
