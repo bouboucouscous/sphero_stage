@@ -39,7 +39,7 @@ The instructions are the following:
    3. cohesion
 
 <div align="left">
-<img width=800px src="resources/figures/reynolds_rules.png" alt="explode"></a>
+<img width=600px src="resources/figures/reynolds_rules.png" alt="explode"></a>
 </div>
 
    Test the implementation in the Stage simulator in the map with a frame.
