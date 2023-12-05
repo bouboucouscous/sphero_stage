@@ -7,7 +7,7 @@ This project aims to simulate the control of a swarm of robots in a simulated en
   - [Expert Groups Document](instruction/Expert%20groups%5B1%5D.docx)
 
 - **Course Material:**
-  - [Aggregation and Foraging Course Presentation](objective/course/L2_-_Aggregation_and_foraging[1].pptx)
+  - [Aggregation and Foraging Course Presentation](https://www.fer.unizg.hr/_download/repository/L2%20-%20Aggregation%20and%20foraging[1].pptx)
 
 ## Requirements:
 
