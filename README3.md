@@ -15,9 +15,13 @@
      - Map selection: `map_name`
      - Robot formation: `distribution`
 
-5. **`/sphero_stage/resources/`:**
+5. **`/sphero_stage/launch/start.py/`:**
+   - Create world
+   - Launch stage simulator
+
+6. **`/sphero_stage/resources/`:**
    - Do not modify unless adding new maps.
    - Contains various maps used in the simulation.
 
-6. **`/sphero_stage/src/sphero_stage/`:**
+7. **`/sphero_stage/src/sphero_stage/`:**
    - Place Python files developed for the execution of movements and/or behaviors here.
