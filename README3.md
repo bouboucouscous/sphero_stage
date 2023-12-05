@@ -1,7 +1,7 @@
 # Controlling a Swarm of Robots
 
 <div align="center">
-<img width=1000px src="resources/figures/reception.jpeg" alt="explode"></a>
+<img width=1000px src="resources/figures/boids.gif" alt="explode"></a>
 </div>
 
 <h3 align="center"> Controlling a Swarm of Robots </h3>
@@ -16,8 +16,8 @@
 * [Table of Contents](#table-of-contents)
 * [Requirements](#requirements)
 * [Project Goal](#project-goal)
-* [Launcher](#launcher)
 * [Explanation of Files and Directories](#explanation-of-files-and-directories)
+* [Execution](#execution)
 * [Team](#team)
 
 ## Requirements
@@ -50,15 +50,6 @@ The instructions are the following:
    3. a simple maze map (useful to test the combination of obstacle avoidance and navigation rules)
    4. a hard maze map (useful to test the combination of obstacle avoidance and navigation rules)
 
-## Launcher
-
------------------------------------------------------------------------
-name.launch:
-``` 
-
-```
------------------------------------------------------------------------
-
 ## Explanation of Files and Directories
 
 **`/sphero_stage/example.yml`:**
@@ -86,6 +77,13 @@ name.launch:
 
 **`/sphero_stage/src/sphero_stage/`:**
 - Place Python files developed for the execution of movements and/or behaviors here.
+
+## Execution
+
+-----------------------------------------------------------------------
+
+
+-----------------------------------------------------------------------
 
 ## Team
 
