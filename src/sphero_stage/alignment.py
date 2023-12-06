@@ -29,17 +29,17 @@ class Alignment:
         self.separation_dist = 0.4
 
         # max and min velocities for the robots
-        self.max_linear_velx = 0.3
-        self.min_linear_velx = -0.3
-        self.max_linear_vely = 0.3
-        self.min_linear_vely = -0.3
+        self.max_linear_velx = 0.4
+        self.min_linear_velx = -0.4
+        self.max_linear_vely = 0.4
+        self.min_linear_vely = -0.4
 
         # velocity vector weights for each behaviour
         self.align_vel_weights = 0.8
-        self.cohesion_vel_weights = 0.15
-        self.separation_vel_weights = 0.8
+        self.cohesion_vel_weights = 0.09
+        self.separation_vel_weights = 1.5
         self.steer_vel_weight = 0.15
-        self.obs_vel_weight = 2.0
+        self.obs_vel_weight = 5.0
 
         # listen to the transforms between robots to compute their relative transformations
         self.tfBuffer = tf2_ros.Buffer()
@@ -237,13 +237,14 @@ class Alignment:
         self.cohesion()
         self.separation()
         self.steer()
-        # self.avoid_obstacle()
+        self.avoid_obstacle()
 
         for i in range(self.num_of_robots):
             weighted_vel = (self.align_vel_weights*self.align_vel[i]
             + self.cohesion_vel_weights*self.cohesion_vel[i]
             + self.separation_vel_weights*self.separation_vel[i]
-            + self.steer_vel_weight*self.steer_vel[i])
+            + self.steer_vel_weight*self.steer_vel[i]
+            + self.obs_vel_weight*self.obs_vel[i])
 
             v = Twist()
             v.linear.x = max(self.min_linear_velx, min(weighted_vel[0], self.max_linear_velx))
