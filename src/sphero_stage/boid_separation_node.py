@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import rospy
 import math
@@ -9,9 +9,11 @@ from sensor_msgs.msg import LaserScan
 class BoidSeparationNode:
 
     def __init__(self):
-        # Create subcribers to receive info from pose and laser
-        rospy.Subscriber('/ground_truth_pose', Pose, self.pose_callback)
-        rospy.Subscriber('/base_scan', LaserScan, self.laser_callback)
+        # Create subcriber to receive info from pose
+        for i in range(1, 11):
+            rospy.Subscriber(f'/robot__{i}/odom', Pose, self.pose_callback)
+        # rospy.Subscriber('/ground_truth_pose', Pose, self.pose_callback)
+        # rospy.Subscriber('/base_scan', LaserScan, self.laser_callback)
 
         # Create a publisher to publish velocity
         self.cmd_vel_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
@@ -36,31 +38,33 @@ class BoidSeparationNode:
 
         self.cmd_vel_pub.publish(cmd_vel_msg)
 
-    def laser_callback(self, data):
-        if data.ranges:
-            separation_vector = self.calculate_separation_vector(data)
-        else:
-            rospy.logwarn("No data received from laser scan")
+    # def laser_callback(self, data):
+    #     if data.ranges:
+    #         separation_vector = self.calculate_separation_vector(data)
+    #     else:
+    #         rospy.logwarn("No data received from laser scan")
     
     # Calculate the separation vector based on the Reynolds rule
-    def calculate_separation_vector(self, laser_data):
+    def calculate_separation_vector(self, pose_data):
         pos = [] # Store boid positions
         separation_vector = [0.0, 0.0]
 
+        boid_pose = (pose_data.position.x, pose_data.position.y)
+
         # Iterate through laser scan ranges
-        for i, range_value in enumerate(laser_data.ranges):
-            if laser_data.range_min < range_value < laser_data.range_max:
-                angle = laser_data.angle_min + i * laser_data.angle_increment
+        for i in range(1, 11):
+            if i != self.boid_number: # Don't do actual boid pose
+                other_boid_pose = rospy.wait_for_message(f'/robot_{i}/odom', Pose)
 
                 # Claculate the position of the detected point
-                x = laser_data.position.x + range_value * cos(angle)
-                y = laser_data.position.y + range_value * sin(angle)
+                x = other_boid_pose.position.x
+                y = other_boid_pose.position.y
 
                 pos.append((x, y)) # Add new boid position
         
         for actual_boid_pos in pos:
-            dx = laser_data.position.x - actual_boid_pos[0]
-            dy = laser_data.position.y - actual_boid_pos[1]
+            dx = boid_pose.position.x - actual_boid_pos[0]
+            dy = boid_pose.position.y - actual_boid_pos[1]
 
             distance = sqrt(dx**2 + dy**2)
 
