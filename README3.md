@@ -95,6 +95,8 @@ In the second terminal run the following command
 
 **`rosrun sphero_stage alignment.py`**
 
+In RVIZ use 2D Nav goal to select a position on the map to give the target position.
+
 -----------------------------------------------------------------------
 
 ## Team
