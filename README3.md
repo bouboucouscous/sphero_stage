@@ -103,6 +103,6 @@ In RVIZ use 2D Nav goal to select a position on the map to give the target posit
 
 - [Sofía Perales](https://github.com/sofiaprlsd)
 - [Remi](https://github.com/bouboucouscous)
-- [Muhammad Awais]
+- [Muhammad Awais](https://github.com/Muhammad0312)
 - [Syed Mazhar]
 - [Milli Angesom]
