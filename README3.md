@@ -87,7 +87,11 @@ The instructions are the following:
 To test our program you have to run the next commands:
 
 -----------------------------------------------------------------------
+In the first terminal run the following command
+roslaunch sphero_stage setup_sim.xml
 
+In the second terminal run the following command
+rosrun sphero_stage alignment.py
 
 -----------------------------------------------------------------------
 
