@@ -94,4 +94,7 @@ To test our program you have to run the next commands:
 ## Team
 
 - [Sofía Perales](https://github.com/sofiaprlsd)
-- [](https://github.com/bouboucouscous)
+- [Remi](https://github.com/bouboucouscous)
+- [Muhammad Awais]
+- [Syed Mazhar]
+- [Milli Angesom]
