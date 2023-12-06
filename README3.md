@@ -1,7 +1,7 @@
 # Controlling a Swarm of Robots
 
 <div align="center">
-<img width=1000px src="resources/figures/reception.jpeg" alt="explode"></a>
+<img width=1000px src="resources/figures/boids.gif" alt="explode"></a>
 </div>
 
 <h3 align="center"> Controlling a Swarm of Robots </h3>
@@ -16,8 +16,8 @@
 * [Table of Contents](#table-of-contents)
 * [Requirements](#requirements)
 * [Project Goal](#project-goal)
-* [Launcher](#launcher)
 * [Explanation of Files and Directories](#explanation-of-files-and-directories)
+* [Execution](#execution)
 * [Team](#team)
 
 ## Requirements
@@ -38,6 +38,10 @@ The instructions are the following:
    2. alignment
    3. cohesion
 
+<div align="left">
+<img width=600px src="resources/figures/reynolds_rules.png" alt="explode"></a>
+</div>
+
    Test the implementation in the Stage simulator in the map with a frame.
 
 2. Implement additional Reynolds rules for:
@@ -49,15 +53,6 @@ The instructions are the following:
    2. a map with different types of obstacles (useful to test obstacle avoidance rules)
    3. a simple maze map (useful to test the combination of obstacle avoidance and navigation rules)
    4. a hard maze map (useful to test the combination of obstacle avoidance and navigation rules)
-
-## Launcher
-
------------------------------------------------------------------------
-name.launch:
-``` 
-
-```
------------------------------------------------------------------------
 
 ## Explanation of Files and Directories
 
@@ -87,6 +82,16 @@ name.launch:
 **`/sphero_stage/src/sphero_stage/`:**
 - Place Python files developed for the execution of movements and/or behaviors here.
 
+## Execution
+
+To test our program you have to run the next commands:
+
+-----------------------------------------------------------------------
+
+
+-----------------------------------------------------------------------
+
 ## Team
 
 - [Sofía Perales](https://github.com/sofiaprlsd)
+- [](https://github.com/bouboucouscous)
