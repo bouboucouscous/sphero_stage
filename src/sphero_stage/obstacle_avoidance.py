@@ -4,7 +4,7 @@ import rospy
 import numpy as np
 import cv2
 from nav_msgs.msg import OccupancyGrid
-from helper_function.utils import Vector2
+# from helper_function.utils import Vector2
 
 class ObstacleAvoidance:
     def __init__(self):
