@@ -8,6 +8,10 @@ import tf2_ros
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Twist, PoseStamped
 from obstacle_avoidance import ObstacleAvoidance
+import time
+
+import json
+import os
 
 class Alignment:
 
@@ -56,6 +60,14 @@ class Alignment:
         self.steer_vel = np.zeros((self.num_of_robots, 2))
         self.obs_vel = np.zeros((self.num_of_robots, 2))
 
+        # data saving
+        self.file_path = "/home/mawais/catkin_ws/src/sphero_simulation/sphero_stage/resources/data/velocities.json"
+        if os.path.exists(self.file_path):
+            os.remove(self.file_path)
+            print("File has been deleted.")
+        else:
+            print("File does not exist.")
+
         # create an instance of the obstacle avoidance class
         self.obstacle = ObstacleAvoidance()
 
@@ -70,20 +82,8 @@ class Alignment:
         
         # subscriber to get the target position from rviz
         rospy.Subscriber("/move_base_simple/goal", PoseStamped, self.target_position_callback)
-        # self.align_velocity_pub = [rospy.Publisher("/robot_{}/align_vel".format(i), Twist, queue_size=1)
-        #                       for i in range(self.num_of_robots)]
-        
-        # self.cohesion_velocity_pub = [rospy.Publisher("/robot_{}/cohesion_vel".format(i), Twist, queue_size=1)
-        #                       for i in range(self.num_of_robots)]
-        
-        # self.separation_velocity_pub = [rospy.Publisher("/robot_{}/separation_vel".format(i), Twist, queue_size=1)
-        #                       for i in range(self.num_of_robots)]
 
-        # rospy.Timer(rospy.Duration(0.05), self.align)
-        # rospy.Timer(rospy.Duration(0.05), self.cohesion)
-        # rospy.Timer(rospy.Duration(0.05), self.separation)
-        # rospy.Timer(rospy.Duration(0.05), self.test_neighbours)
-        # timer to call the weighted_velocities function at 20Hz
+        # timer to call the weighted_velocities function
         rospy.Timer(rospy.Duration(0.05), self.weighted_velocities)
         
 
@@ -147,18 +147,11 @@ class Alignment:
             neighbours = self.neighbours(i)
             if len(neighbours) != 0:
                 average_velocity = self.average_velocity(neighbours)
-                # current_velocity = self.velocities[i]
-                # difference = average_velocity - current_velocity
-                # current_velocity += 0.5*difference
                 current_velocity = average_velocity
                 vx = max(self.min_linear_velx, min(current_velocity[0], self.max_linear_velx))
                 vy = max(self.min_linear_vely, min(current_velocity[1], self.max_linear_vely))
                 v = np.array([vx, vy])
                 self.align_vel[i] = v
-                # vel = Twist()
-                # vel.linear.x = max(self.min_linear_velx, min(current_velocity[0], self.max_linear_velx))
-                # vel.linear.y = max(self.min_linear_vely, min(current_velocity[1], self.max_linear_vely))
-                # self.align_velocity_pub[i].publish(vel)
 
     def average_position(self, robot_num):
         # Find average position of neighbours of robot_num
@@ -181,10 +174,6 @@ class Alignment:
                 vy = max(self.min_linear_vely, min(difference[1], self.max_linear_vely))
                 v = np.array([vx, vy])
                 self.cohesion_vel[i] = v
-                # vel = Twist()
-                # vel.linear.x = max(self.min_linear_velx, min(difference[0], self.max_linear_velx))
-                # vel.linear.y = max(self.min_linear_vely, min(difference[1], self.max_linear_vely))
-                # self.cohesion_velocity_pub[i].publish(vel)
 
     def separation(self):
         # find the neighbours in the neighborhood and move away from them
@@ -194,17 +183,13 @@ class Alignment:
             for neighbour in neighbours:
                 difference = self.positions[i] - self.positions[neighbour]
                 if np.linalg.norm(difference) < self.separation_dist:
-                    force += (difference/np.linalg.norm(difference))
+                    force += difference/((np.linalg.norm(difference)+0.00001))
             
             force /= max(1, len(neighbours))
             vx = max(self.min_linear_velx, min(force[0], self.max_linear_velx))
             vy = max(self.min_linear_vely, min(force[1], self.max_linear_vely))
             v = np.array([vx, vy])
             self.separation_vel[i] = v
-            # vel = Twist()
-            # vel.linear.x = max(self.min_linear_velx, min(force[0], self.max_linear_velx))
-            # vel.linear.y = max(self.min_linear_vely, min(force[1], self.max_linear_vely))
-            # self.separation_velocity_pub[i].publish(vel)
 
     def steer(self):
         # steer towards the target position
@@ -229,6 +214,9 @@ class Alignment:
         for i in range(self.num_of_robots):
             heading = np.arctan2(self.velocities[i][1], self.velocities[i][0])
             v = self.obstacle.Obstacle_vel(self.target_position, heading, self.positions[i])
+            # vx = max(self.min_linear_velx, min(v[0], self.max_linear_velx))
+            # vy = max(self.min_linear_vely, min(v[1], self.max_linear_vely))
+            # v = np.array([vx, vy])
             self.obs_vel[i] = v
 
     def weighted_velocities(self, event):
@@ -238,6 +226,7 @@ class Alignment:
         self.separation()
         self.steer()
         self.avoid_obstacle()
+        # velocity_data = {}
 
         for i in range(self.num_of_robots):
             weighted_vel = (self.align_vel_weights*self.align_vel[i]
@@ -250,6 +239,20 @@ class Alignment:
             v.linear.x = max(self.min_linear_velx, min(weighted_vel[0], self.max_linear_velx))
             v.linear.y = max(self.min_linear_vely, min(weighted_vel[1], self.max_linear_vely))
             self.cmd_vel_pub[i].publish(v)
+        
+        # velocity_data = {'cohesion_vel': self.cohesion_vel_weights*np.linalg.norm(self.cohesion_vel[5]),
+        #                 'align_vel': self.align_vel_weights*np.linalg.norm(self.align_vel[5]),
+        #                 'separation_vel': self.separation_vel_weights*np.linalg.norm(self.separation_vel[5]),
+        #                 'steer_vel': self.steer_vel_weight*np.linalg.norm(self.steer_vel[5]),
+        #                 'obs_vel': self.obs_vel_weight*np.linalg.norm(self.obs_vel[5]),
+        #                 'time': time.time()}
+        
+        # self.save_velocity(velocity_data)
+
+    def save_velocity(self, velocity_data):
+        with open(self.file_path, 'a') as jsonfile:
+            json.dump(velocity_data, jsonfile)
+            jsonfile.write('\n')  # Add a newline for better readability
 
 
 if __name__ == '__main__':

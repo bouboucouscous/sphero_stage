@@ -1,7 +1,7 @@
 <launch>
     <!-- Default values - you don't have to change this if using start.py. -->
     <arg name="num_of_robots" default="10"/>         <!-- Number of robots used. -->
-    <arg name="map_name" default="simple_maze_10x10"/>     <!-- Name of the map used. -->
+    <arg name="map_name" default="random_10x10"/>     <!-- Name of the map used. -->
     <arg name="start_rviz" default="true"/>        <!-- Automatically start Rviz. -->
 
     <arg name="map_world" default="$(find sphero_stage)/resources/worlds/$(arg map_name)_$(arg num_of_robots).world"/>
