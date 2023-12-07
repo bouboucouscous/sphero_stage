@@ -44,9 +44,9 @@ class Alignment:
         # velocity vector weights for each behaviour
         self.align_vel_weights = 0.8
         self.cohesion_vel_weights = 0.09
-        self.separation_vel_weights = 1.5
-        self.steer_vel_weight = 0.15
-        self.obs_vel_weight = 5.0
+        self.separation_vel_weights = 2.0
+        self.steer_vel_weight = 0.10
+        self.obs_vel_weight = 9.5
 
         # listen to the transforms between robots to compute their relative transformations
         self.tfBuffer = tf2_ros.Buffer()
