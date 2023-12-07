@@ -28,6 +28,9 @@ class Alignment:
         # separation distance to be maintained
         self.separation_dist = 0.4
 
+        #max force of cohesion
+        self.max_force = 10
+
         # max and min velocities for the robots
         self.max_linear_velx = 0.4
         self.min_linear_velx = -0.4
@@ -177,9 +180,10 @@ class Alignment:
                 average_position = self.average_position(i)
                 current_position = self.positions[i]
                 difference = average_position - current_position
-                vx = max(self.min_linear_velx, min(difference[0], self.max_linear_velx))
-                vy = max(self.min_linear_vely, min(difference[1], self.max_linear_vely))
-                v = np.array([vx, vy])
+                distance = np.linalg.norm(difference)  # Calcul mean dist
+                normalized_difference = difference / (distance + 1e-5)  # Normalization to avoid division by zero
+                magnitude = min(distance, self.max_force)  # Adjust this according to your needs
+                v = magnitude * normalized_difference
                 self.cohesion_vel[i] = v
                 # vel = Twist()
                 # vel.linear.x = max(self.min_linear_velx, min(difference[0], self.max_linear_velx))
