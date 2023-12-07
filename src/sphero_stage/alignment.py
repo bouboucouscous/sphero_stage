@@ -44,9 +44,9 @@ class Alignment:
         # velocity vector weights for each behaviour
         self.align_vel_weights = 0.8
         self.cohesion_vel_weights = 0.09
-        self.separation_vel_weights = 2.0
-        self.steer_vel_weight = 0.10
-        self.obs_vel_weight = 9.5
+        self.separation_vel_weights = 1.2
+        self.steer_vel_weight = 0.15
+        self.obs_vel_weight = 5.0
 
         # listen to the transforms between robots to compute their relative transformations
         self.tfBuffer = tf2_ros.Buffer()
@@ -173,10 +173,13 @@ class Alignment:
                 average_position = self.average_position(i)
                 current_position = self.positions[i]
                 difference = average_position - current_position
-                distance = np.linalg.norm(difference)  # Calcul mean dist
-                normalized_difference = difference / (distance + 1e-5)  # Normalization to avoid division by zero
-                magnitude = min(distance, self.max_force)  # Adjust this according to your needs
-                v = magnitude * normalized_difference
+                vx = max(self.min_linear_velx, min(difference[0], self.max_linear_velx))
+                vy = max(self.min_linear_vely, min(difference[1], self.max_linear_vely))
+                v = np.array([vx, vy])
+                # distance = np.linalg.norm(difference)  # Calcul mean dist
+                # normalized_difference = difference / (distance + 1e-5)  # Normalization to avoid division by zero
+                # magnitude = min(distance, self.max_force)  # Adjust this according to your needs
+                # v = magnitude * normalized_difference
                 self.cohesion_vel[i] = v
 
     def separation(self):
