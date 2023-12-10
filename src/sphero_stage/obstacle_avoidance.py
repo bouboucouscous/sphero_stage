@@ -11,13 +11,12 @@ class ObstacleAvoidance:
         """
         Initialize the ObstacleAvoidance class.
         """
-        # rospy.init_node('obstacle_avoidance_node', anonymous=True)
+        
         self.map_subscriber = rospy.Subscriber("/map", OccupancyGrid, self.map_callback)
         self.map_data = None
-        self.fov_length = 100
+        self.fov_length = 60
         self.fov_width = 5
-        self.fov_angle = 90 # angle of field of view of the robot in degrees
-        self.wall_follow = False
+        self.fov_angle = 180 # angle of field of view of the robot in degrees
 
     def map_callback(self, msg):
         """
@@ -36,7 +35,7 @@ class ObstacleAvoidance:
 
     def visualize_map(self, map_data):
         """
-        Visualize the map using OpenCV.
+        Visualize the map using OpenCV. On used for demonstration!
         """
         # Create an empty image for visualization
         display_map = np.zeros(map_data.shape, dtype=np.uint8)
@@ -77,7 +76,7 @@ class ObstacleAvoidance:
             costs[angle]=float('inf')
             obs = self.check_obstacle(heading + angle, fov_length, fov_width, robot_position)
             if not obs:
-                predicted_position = self.predict_position(heading + angle, robot_position, velocity=1, dt=2)
+                predicted_position = self.predict_position(heading + angle, robot_position, velocity=0.4, dt=1)
                 distance = np.linalg.norm(predicted_position - goal)
                 # Compute the overall cost  
                 costs[angle]= distance
@@ -86,11 +85,9 @@ class ObstacleAvoidance:
         best_angle = min(costs, key=lambda angle: costs[angle])
 
         if 0 < best_angle < np.pi:
-            # print("steer to the LEFT")
-            return 0.5*np.pi
+            return 0.5*np.pi  #steer to the LEFT
         else:
-            # print("steer to the RIGHT")
-            return -0.5*np.pi
+            return -0.5*np.pi  #steer to the RIGHT
 
                 
     def predict_position( self, theta, robot_position, velocity,dt=2):
@@ -139,10 +136,10 @@ class ObstacleAvoidance:
         map_with_fov[self.map_data == 100] = 255  # Occupied cells
 
         corners = [
-            (0,-width),  # Left corner at robot position
-            (0, width),  # Right corner at robot position
-            (length, width),  # Right corner at FOV end
-            (length, -width)  # Left corner at FOV end
+            (0,-width),  # Top Left corner
+            (0, width),  # Bottom Left corner
+            (length, width),  # Bottom Right corner
+            (length, -width)  # Top Right corner
         ]
 
         # Rotate corners by the robot's heading
@@ -170,17 +167,14 @@ class ObstacleAvoidance:
         # cv2.imshow("FOV Mask", fov_pixels)
         # cv2.waitKey(5)  # Wait indefinitely until a key is pressed
     
-
-        
         # Visualize the updated map
         # self.visualize_map(map_with_fov)
         # self.visualize_map(fov_pixels)
 
+
         if np.any(fov_pixels == 255):
-            # print("Obstacle detected in the FOV.")
             return True
         else:
-            # print("No obstacle in the FOV.")
             return False
 
 
@@ -197,7 +191,7 @@ class ObstacleAvoidance:
 
     def Obstacle_vel(self, goal, heading, robot_position):
         """
-        The main run loop of the node.
+        The Obstacle_vel run loop of the node.
 
         Inputs
         goal = np.array([x_goal, y_goal])
@@ -209,106 +203,11 @@ class ObstacleAvoidance:
         """
         
         
-        robot_velocity = [0.5*np.cos(heading), 0.5*np.sin(heading)]
-        # while not rospy.is_shutdown():
         if self.map_data is not None:
-            if not self.wall_follow or True:
 
-                if self.check_obstacle(heading, self.fov_length-95, self.fov_width,robot_position):
-                    self.angle = self.compute_steering_angle(heading, goal, self.fov_length, self.fov_width, robot_position)
-                    self.wall_follow = True
-                    steering_correction = Vector2(robot_velocity[0], robot_velocity[1])
-            
-                    perpendicular_vec = Vector2(np.cos(heading + self.angle), np.sin(heading + self.angle))
-                
-                    steering_correction.rotate(180)
-                    # print("perpendicular_vecperpendicular_vec",perpendicular_vec.arg())
-                    result = steering_correction.__add__(perpendicular_vec.__mul__(20))
-                    return np.array([perpendicular_vec.x, perpendicular_vec.y])  #result #.normalize(ret= True)
-            else:
-                #check if the robot can see the goal
-                g = Vector2(goal[0], goal[1])
-                r = Vector2(robot_position[0], robot_position[1])
-                g.__sub__(r)
-                
-                if not self.check_obstacle(np.deg2rad(g.arg()) , int(g.norm() /self.map_resolution), self.fov_width,robot_position):
-                    self.wall_follow= False
-                return self.wall_following(heading, self.angle, robot_position)
-
-        
+            if self.check_obstacle(heading, self.fov_length-40, self.fov_width,robot_position):
+                self.angle = self.compute_steering_angle(heading, goal, self.fov_length, self.fov_width, robot_position)
+                perpendicular_vec = Vector2(np.cos(heading + self.angle), np.sin(heading + self.angle))
+                return np.array([perpendicular_vec.x, perpendicular_vec.y]) 
+                     
         return np.array([0,0])
-    
-    def wall_following(self, heading, wall, robot_position):
-        desired_distance = 20  # desired distance in pixels (cells) from the wall
-        pos_x, pos_y = self.robot_to_map_coordinates(robot_position)
-
-        x =   np.cos(-wall)*np.cos(heading) - np.sin(-wall)*np.sin(heading)
-        y =   np.sin(-wall)*np.cos(heading) + np.cos(-wall)*np.sin(heading) 
-
-        small = min(x, y)
-        
-        if small!=0:
-            x= int(x/ small)
-            y = int(y /small)
-        
-        for i in range(desired_distance):
-            
-            if self.map_data[pos_x+i*x, pos_y+i*y] == 100 and i < (desired_distance-1):
-                perpendicular_vec = Vector2(np.cos(heading + 0.1*wall), np.sin(heading + 0.1*wall))
-                perpendicular_vec.__mul__(1)
-                return perpendicular_vec
-            elif self.map_data[pos_x+i*x, pos_y+i*y] == 100 and i == (desired_distance-1):
-                perpendicular_vec = Vector2(np.cos(heading - 0.1*wall), np.sin(heading - 0.1*wall))
-                perpendicular_vec.__mul__(1)
-                return perpendicular_vec
-            else:
-                heading_vec = Vector2(np.cos(heading), np.sin(heading ))
-                heading_vec.__mul__(1)
-                return heading_vec
-            
-    
-
-    def compute_slope_of_obstacle_boundary(self, image, robot_position, neighborhood_size):
-        # Define the square neighborhood
-        x, y = robot_position
-        half_size = neighborhood_size // 2
-        blurred = image[y-half_size:y+half_size, x-half_size:x+half_size]
-
-        # Edge detection
-        edges = cv2.Canny(blurred, 50, 150)
-
-        # Line detection using Hough Transform
-        lines = cv2.HoughLinesP(edges, 1, np.pi/180, threshold=50, minLineLength=20, maxLineGap=10)
-
-        # Compute angles of detected lines
-        angles = []
-        if lines is not None:
-            for line in lines:
-                x1, y1, x2, y2 = line[0]
-                angle = np.arctan2(y2 - y1, x2 - x1) * 180 / np.pi  # Convert to degrees
-                angles.append(angle)
-
-        return angles
-
-# Usage example
-# image = cv2.imread('path_to_image.jpg')  # Load your image
-# robot_position = (x, y)  # Replace with robot's current position
-# neighborhood_size = 50  # Define the size of the square neighborhood
-# slopes = compute_slope_of_obstacle_boundary(image, robot_position, neighborhood_size)
-
-
-        
-    # def run(self):
-
-        
-    #     # self.main()
-        
-
-    #     rospy.spin()
-
-# if __name__ == '__main__':
-#     try:
-#         obstacle_avoidance = ObstacleAvoidance()
-#         obstacle_avoidance.run()
-#     except rospy.ROSInterruptException:
-#         pass
